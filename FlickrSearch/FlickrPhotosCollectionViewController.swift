@@ -33,8 +33,7 @@ class FlickrPhotosCollectionViewController: UICollectionViewController {
   private let sectionInsets = UIEdgeInsets(top: 50, left: 20, bottom: 50, right: 20)
   private var searches: [FlickrSearchResults] = []
   private let flickr = Flickr()
-  
-
+  private let itemsPerRow: CGFloat = 3
 }
 
 private extension FlickrPhotosCollectionViewController {
@@ -74,5 +73,46 @@ extension FlickrPhotosCollectionViewController: UITextFieldDelegate {
     textField.text = nil
     textField.resignFirstResponder()
     return true
+  }
+}
+
+extension FlickrPhotosCollectionViewController {
+  override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    searches.count
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    searches[section].searchResults.count
+  }
+  
+  override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    let cell = collectionView.dequeueReusableCell(
+      withReuseIdentifier: reuseIdentifier,
+      for: indexPath
+    ) as! FlickrPhotoCellCollectionViewCell
+    
+    let flickPhoto = photo(for: indexPath)
+    cell.backgroundColor = .white
+    cell.imageView.image = flickPhoto.thumbnail
+    
+    return cell
+  }
+}
+
+extension FlickrPhotosCollectionViewController: UICollectionViewDelegateFlowLayout {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
+    let availableWidth = view.frame.width - paddingSpace
+    let widthPerItem = availableWidth / itemsPerRow
+    
+    return CGSize(width: widthPerItem, height: widthPerItem)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    sectionInsets
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    sectionInsets.left
   }
 }
