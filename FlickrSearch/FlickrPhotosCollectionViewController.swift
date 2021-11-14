@@ -64,6 +64,25 @@ class FlickrPhotosCollectionViewController: UICollectionViewController {
     
     return false
   }
+  
+  func performLargeImageFetch(for indexPath: IndexPath, flickrPhoto: FlickrPhoto, cell: FlickrPhotoCellCollectionViewCell) {
+    cell.activityIndicator.startAnimating()
+    
+    flickrPhoto.loadLargeImage { [weak self] result in
+      cell.activityIndicator.stopAnimating()
+      
+      guard let self = self else { return }
+      
+      switch result {
+      case .success(let photo):
+        if indexPath == self.largePhotoIndexPath {
+          cell.imageView.image = photo.largeImage
+        }
+      case .failure:
+        return
+      }
+    }
+  }
 }
 
 private extension FlickrPhotosCollectionViewController {
@@ -122,8 +141,24 @@ extension FlickrPhotosCollectionViewController {
     ) as! FlickrPhotoCellCollectionViewCell
     
     let flickPhoto = photo(for: indexPath)
-    cell.backgroundColor = .white
+    
+    cell.activityIndicator.stopAnimating()
+    
+    guard let largePhotoIndexPath = largePhotoIndexPath else {
+      cell.imageView.image = flickPhoto.thumbnail
+      return cell
+    }
+    
+    cell.isSelected = true
+    
+    guard flickPhoto.largeImage == nil else {
+      cell.imageView.image = flickPhoto.largeImage
+      return cell
+    }
+    
     cell.imageView.image = flickPhoto.thumbnail
+    
+    performLargeImageFetch(for: largePhotoIndexPath, flickrPhoto: flickPhoto, cell: cell)
     
     return cell
   }
