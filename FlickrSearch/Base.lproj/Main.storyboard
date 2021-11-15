@@ -89,6 +89,11 @@
                                 <outlet property="delegate" destination="Nav-UJ-dcj" id="eze-6j-xqY"/>
                             </connections>
                         </textField>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="omQ-jX-g84">
+                            <connections>
+                                <action selector="shareButtonTapped:" destination="Nav-UJ-dcj" id="J1d-mx-SCb"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GEG-hO-4rX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
