@@ -31,7 +31,7 @@ import UIKit
 class FlickrPhotosCollectionViewController: UICollectionViewController {
   private let reuseIdentifier = "FlickrCell"
   private let sectionInsets = UIEdgeInsets(top: 50, left: 20, bottom: 50, right: 20)
-  private var searches: [FlickrSearchResults] = []
+  var searches: [FlickrSearchResults] = []
   private let flickr = Flickr()
   private let itemsPerRow: CGFloat = 3
   var largePhotoIndexPath: IndexPath? {
@@ -82,6 +82,13 @@ class FlickrPhotosCollectionViewController: UICollectionViewController {
       
       navigationItem.setRightBarButtonItems(items, animated: true)
     }
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    collectionView.dragInteractionEnabled = true
+    collectionView.dragDelegate = self
+    collectionView.dropDelegate = self
   }
   
   override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
@@ -181,12 +188,6 @@ class FlickrPhotosCollectionViewController: UICollectionViewController {
       shareController.popoverPresentationController?.permittedArrowDirections = .any
       present(shareController, animated: true)
     }
-}
-
-private extension FlickrPhotosCollectionViewController {
-  func photo(for indexPath: IndexPath) -> FlickrPhoto {
-    searches[indexPath.section].searchResults[indexPath.row]
-  }
 }
 
 extension FlickrPhotosCollectionViewController: UITextFieldDelegate {
